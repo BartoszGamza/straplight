@@ -10,6 +10,9 @@ export interface SearchResult {
   uid: string;
 }
 
+const MIN_QUERY_LENGTH = 2;
+const DEBOUNCE_MS = 200;
+
 export function useStraplight() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -17,6 +20,7 @@ export function useStraplight() {
   const [loading, setLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -35,6 +39,7 @@ export function useStraplight() {
     setResults([]);
     setSelectedIndex(0);
     setLoading(false);
+    requestIdRef.current++;
   }, []);
 
   useEffect(() => {
@@ -45,29 +50,34 @@ export function useStraplight() {
     }
 
     const trimmed = query.trim();
-    if (!trimmed) {
+    if (trimmed.length < MIN_QUERY_LENGTH) {
       setResults([]);
       setSelectedIndex(0);
       setLoading(false);
       return;
     }
 
-    setLoading(true);
     debounceRef.current = setTimeout(async () => {
+      const id = ++requestIdRef.current;
+      setLoading(true);
       try {
         const { get } = getFetchClient();
         const { data } = await get(`/${PLUGIN_ID}/search`, {
           params: { q: trimmed },
         });
+        // Ignore stale responses
+        if (id !== requestIdRef.current) return;
         setResults((data as any).results || []);
         setSelectedIndex(0);
-      } catch (err) {
-        console.error('[straplight] search error:', err);
+      } catch {
+        if (id !== requestIdRef.current) return;
         setResults([]);
       } finally {
-        setLoading(false);
+        if (id === requestIdRef.current) {
+          setLoading(false);
+        }
       }
-    }, 200);
+    }, DEBOUNCE_MS);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -77,7 +87,6 @@ export function useStraplight() {
   const navigateToResult = useCallback(
     (result: SearchResult) => {
       const path = `/content-manager/collection-types/${result.uid}/${result.documentId}`;
-      // Use captured SPA navigate if available, otherwise full navigation
       const nav = (window as any).__straplight?.navigate;
       if (nav) {
         nav(path);

@@ -10,8 +10,6 @@ export default {
   },
 
   bootstrap(app: any) {
-    console.log('[straplight] bootstrapped');
-
     // Inject NavigateCapture into content-manager to grab SPA navigate
     const contentManager = app.getPlugin('content-manager');
     contentManager.injectComponent('listView', 'actions', {
@@ -28,7 +26,6 @@ export default {
           document.body.appendChild(el);
           const root = createRoot(el);
           root.render(jsx(StraplightOverlay, {}));
-          console.log('[straplight] overlay mounted');
         });
       });
     });

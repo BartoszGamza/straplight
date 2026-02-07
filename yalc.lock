@@ -1,9 +1,0 @@
-{
-  "version": "v1",
-  "packages": {
-    "straplight": {
-      "signature": "c41c8f268a82654d05f35902e1899d4a",
-      "file": true
-    }
-  }
-}

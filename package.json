@@ -1,6 +1,25 @@
 {
-  "version": "0.0.1",
-  "keywords": [],
+  "name": "straplight",
+  "version": "1.0.0",
+  "description": "Spotlight-like search for Strapi admin",
+  "license": "MIT",
+  "author": "Bartosz Gamza",
+  "keywords": [
+    "strapi",
+    "strapi-plugin",
+    "search",
+    "spotlight",
+    "cmd-k",
+    "command-palette"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bartoszgamza/straplight.git"
+  },
+  "homepage": "https://github.com/bartoszgamza/straplight#readme",
+  "bugs": {
+    "url": "https://github.com/bartoszgamza/straplight/issues"
+  },
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
@@ -33,8 +52,7 @@
   "dependencies": {
     "@strapi/design-system": "^2.0.0-rc.30",
     "@strapi/icons": "^2.0.0-rc.30",
-    "react-intl": "^8.1.3",
-    "straplight": "file:.yalc/straplight"
+    "react-intl": "^8.1.3"
   },
   "devDependencies": {
     "@strapi/sdk-plugin": "^5.4.0",
@@ -62,9 +80,5 @@
     "name": "straplight",
     "displayName": "Straplight",
     "description": "Spotlight-like search for Strapi admin"
-  },
-  "name": "straplight",
-  "description": "Spotlight-like search for Strapi admin",
-  "license": "MIT",
-  "author": "Bartosz Gamza <tobeadded@test.com>"
+  }
 }
