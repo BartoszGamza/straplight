@@ -7,8 +7,8 @@ const OVERLAY_STYLES = `
   to { opacity: 1; }
 }
 @keyframes straplight-slide-in {
-  from { opacity: 0; transform: translate(-50%, -50%) translateY(16px); }
-  to { opacity: 1; transform: translate(-50%, -50%); }
+  from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+  to { opacity: 1; transform: translateX(-50%); }
 }
 @keyframes straplight-spin {
   to { transform: rotate(360deg); }
@@ -25,27 +25,7 @@ function resolveIsDark(): boolean {
 }
 
 function useIsDarkMode() {
-  const [dark, setDark] = useState(resolveIsDark);
-
-  useEffect(() => {
-    const check = () => setDark(resolveIsDark());
-
-    // Cross-tab localStorage changes
-    window.addEventListener('storage', check);
-    // System theme changes
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    mq.addEventListener('change', check);
-    // Same-tab localStorage changes (storage event doesn't fire in same tab)
-    const interval = setInterval(check, 1000);
-
-    return () => {
-      window.removeEventListener('storage', check);
-      mq.removeEventListener('change', check);
-      clearInterval(interval);
-    };
-  }, []);
-
-  return dark;
+  return resolveIsDark();
 }
 
 // Colors matching Strapi's design system
@@ -147,7 +127,7 @@ export function StraplightOverlay() {
         onKeyDown={onKeyDown}
         style={{
           position: 'fixed',
-          top: '50%',
+          top: 'calc(50% - 50px)',
           left: '50%',
           width: '580px',
           maxWidth: 'calc(100vw - 32px)',

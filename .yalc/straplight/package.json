@@ -1,5 +1,5 @@
 {
-  "version": "0.0.0",
+  "version": "0.0.1",
   "keywords": [],
   "type": "commonjs",
   "exports": {
@@ -53,6 +53,6 @@
   "name": "straplight",
   "description": "Spotlight-like search for Strapi admin",
   "license": "MIT",
-  "author": "Bartosz Gamza <bartosz.gamza12@gmail.com>",
-  "yalcSig": "186b22becd4fbc83347e67c2d4c94c03"
+  "author": "Bartosz Gamza <tobeadded@test.com>",
+  "yalcSig": "c41c8f268a82654d05f35902e1899d4a"
 }
