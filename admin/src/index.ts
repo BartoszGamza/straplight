@@ -10,6 +10,21 @@ export default {
   },
 
   bootstrap(app: any) {
+    // Register settings page
+    app.addSettingsLink('global', {
+      id: `${PLUGIN_ID}-settings`,
+      to: PLUGIN_ID,
+      intlLabel: {
+        id: `${PLUGIN_ID}.settings.link`,
+        defaultMessage: 'Straplight',
+      },
+      permissions: [],
+      async Component() {
+        const { SettingsPage } = await import('./pages/Settings');
+        return { default: SettingsPage };
+      },
+    });
+
     // Inject NavigateCapture into content-manager to grab SPA navigate
     const contentManager = app.getPlugin('content-manager');
     contentManager.injectComponent('listView', 'actions', {
