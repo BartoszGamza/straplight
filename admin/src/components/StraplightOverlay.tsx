@@ -283,19 +283,46 @@ function ResultItem({
           : 'transparent';
       }}
     >
-      <span
+      <div
         style={{
-          fontSize: '14px',
-          color: t.text,
-          fontWeight: isSelected ? 600 : 400,
+          flex: 1,
           overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
           marginRight: '12px',
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: '8px',
         }}
       >
-        {result.label}
-      </span>
+        <span
+          style={{
+            fontSize: '14px',
+            color: t.text,
+            fontWeight: isSelected ? 600 : 400,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            flexShrink: 1,
+            minWidth: 0,
+          }}
+        >
+          {result.label}
+        </span>
+        {result.fields && result.fields.length > 0 && (
+          <span
+            style={{
+              fontSize: '12px',
+              color: t.textMuted,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              flexShrink: 2,
+              minWidth: 0,
+            }}
+          >
+            {result.fields.map((f) => f.value).join(' · ')}
+          </span>
+        )}
+      </div>
       <span
         style={{
           fontSize: '11px',

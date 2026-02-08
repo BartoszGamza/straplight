@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getFetchClient } from '@strapi/strapi/admin';
 import { PLUGIN_ID } from '../pluginId';
+import { useStraplightSettings } from './useStraplightSettings';
 
 export interface SearchResult {
   id: number;
@@ -8,12 +9,11 @@ export interface SearchResult {
   label: string;
   contentType: string;
   uid: string;
+  fields: { name: string; value: string }[];
 }
 
-const MIN_QUERY_LENGTH = 2;
-const DEBOUNCE_MS = 200;
-
 export function useStraplight() {
+  const settings = useStraplightSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -50,7 +50,7 @@ export function useStraplight() {
     }
 
     const trimmed = query.trim();
-    if (trimmed.length < MIN_QUERY_LENGTH) {
+    if (trimmed.length < settings.minQueryLength) {
       setResults([]);
       setSelectedIndex(0);
       setLoading(false);
@@ -77,12 +77,12 @@ export function useStraplight() {
           setLoading(false);
         }
       }
-    }, DEBOUNCE_MS);
+    }, settings.debounceMs);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [query, isOpen]);
+  }, [query, isOpen, settings.debounceMs, settings.minQueryLength]);
 
   const navigateToResult = useCallback(
     (result: SearchResult) => {
