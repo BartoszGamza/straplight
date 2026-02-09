@@ -15,7 +15,7 @@ export interface StraplightSettings {
 export interface ContentTypeInfo {
   uid: string;
   displayName: string;
-  fields: { name: string; type: string }[];
+  fields: { name: string; type: string; target?: string }[];
   mainField: string;
 }
 
@@ -69,8 +69,19 @@ const settings = ({ strapi }: { strapi: Core.Strapi }) => ({
           (schema as any).info?.singularName ||
           uid,
         fields: Object.entries((schema as any).attributes || {})
-          .filter(([, attr]) => STRING_FIELD_TYPES.has((attr as any).type))
-          .map(([name, attr]) => ({ name, type: (attr as any).type })),
+          .filter(([, attr]) => {
+            const a = attr as any;
+            return STRING_FIELD_TYPES.has(a.type) || (a.type === 'relation' && a.target?.startsWith('api::'));
+          })
+          .map(([name, attr]) => {
+            const a = attr as any;
+            if (a.type === 'relation') {
+              const targetSchema = strapi.contentTypes[a.target as keyof typeof strapi.contentTypes];
+              const targetName = (targetSchema as any)?.info?.displayName || a.target;
+              return { name, type: 'relation', target: targetName };
+            }
+            return { name, type: a.type };
+          }),
         mainField: getMainField(schema) || '',
       }));
   },
