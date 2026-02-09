@@ -23,7 +23,7 @@ import { PLUGIN_ID } from '../pluginId';
 interface ContentTypeInfo {
   uid: string;
   displayName: string;
-  fields: { name: string; type: string }[];
+  fields: { name: string; type: string; target?: string }[];
   mainField: string;
 }
 
@@ -235,7 +235,7 @@ export function SettingsPage() {
                         >
                           {availableFields.map((field) => (
                             <MultiSelectOption key={field.name} value={field.name}>
-                              {field.name}
+                              {field.type === 'relation' ? `${field.name} (${field.target})` : field.name}
                             </MultiSelectOption>
                           ))}
                         </MultiSelect>
