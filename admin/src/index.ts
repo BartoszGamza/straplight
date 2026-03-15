@@ -34,13 +34,13 @@ export default {
 
     // Mount the persistent overlay on document.body
     import('react-dom/client').then(({ createRoot }) => {
-      import('./components/StraplightOverlay').then(({ StraplightOverlay }) => {
+      import('./components/StraplightProvider').then(({ StraplightProvider }) => {
         import('react/jsx-runtime').then(({ jsx }) => {
           const el = document.createElement('div');
           el.id = 'straplight-portal';
           document.body.appendChild(el);
           const root = createRoot(el);
-          root.render(jsx(StraplightOverlay, {}));
+          root.render(jsx(StraplightProvider, {}));
         });
       });
     });
