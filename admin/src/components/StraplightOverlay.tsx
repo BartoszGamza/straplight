@@ -1,7 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useStraplight, SearchResult } from '../hooks/useStraplight';
+import { Box, Flex, Divider, Typography, Loader } from '@strapi/design-system';
+import { Search } from '@strapi/icons';
 
 const OVERLAY_STYLES = `
+#straplight-portal input::placeholder {
+  color: inherit;
+  opacity: 0.6;
+}
 @keyframes straplight-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -14,59 +20,6 @@ const OVERLAY_STYLES = `
   to { transform: rotate(360deg); }
 }
 `;
-
-// Strapi stores theme preference in localStorage under 'STRAPI_THEME'
-// Values: 'light', 'dark', or 'system'
-function resolveIsDark(): boolean {
-  const stored = localStorage.getItem('STRAPI_THEME') || 'system';
-  if (stored === 'dark') return true;
-  if (stored === 'light') return false;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-function useIsDarkMode() {
-  return resolveIsDark();
-}
-
-// Colors matching Strapi's design system
-const themes = {
-  light: {
-    bg: '#ffffff',
-    bgHover: '#f6f6f9',
-    bgSelected: '#f0f0ff',
-    text: '#32324d',
-    textMuted: '#8e8ea9',
-    border: '#eaeaef',
-    inputText: '#32324d',
-    badge: '#f6f6f9',
-    kbd: '#f6f6f9',
-    kbdBorder: '#dcdce4',
-    kbdText: '#666687',
-    backdrop: 'rgba(0, 0, 0, 0.4)',
-    shadow: '0 16px 70px rgba(0, 0, 0, 0.2)',
-    spinnerTrack: '#eaeaef',
-    spinnerAccent: '#4945ff',
-  },
-  dark: {
-    bg: '#212134',
-    bgHover: '#2a2a3e',
-    bgSelected: '#2e2e48',
-    text: '#eaeaef',
-    textMuted: '#a5a5ba',
-    border: '#3d3d57',
-    inputText: '#eaeaef',
-    badge: '#2e2e48',
-    kbd: '#2e2e48',
-    kbdBorder: '#3d3d57',
-    kbdText: '#a5a5ba',
-    backdrop: 'rgba(0, 0, 0, 0.6)',
-    shadow: '0 16px 70px rgba(0, 0, 0, 0.5)',
-    spinnerTrack: '#3d3d57',
-    spinnerAccent: '#7b79ff',
-  },
-};
-
-type Theme = typeof themes.light;
 
 export function StraplightOverlay() {
   const {
@@ -81,8 +34,6 @@ export function StraplightOverlay() {
     navigateToResult,
   } = useStraplight();
 
-  const dark = useIsDarkMode();
-  const t = dark ? themes.dark : themes.light;
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -111,110 +62,95 @@ export function StraplightOverlay() {
     <>
       <style>{OVERLAY_STYLES}</style>
       {/* Backdrop */}
-      <div
+      <Box
         onClick={close}
+        background='rgba(0, 0, 0, 0.5)'
+        position='fixed'
+        zIndex={99999}
+        animation='straplight-fade-in 0.15s ease-out'
         style={{
-          position: 'fixed',
           inset: 0,
-          backgroundColor: t.backdrop,
           backdropFilter: 'blur(4px)',
-          zIndex: 99999,
-          animation: 'straplight-fade-in 0.15s ease-out',
         }}
       />
       {/* Modal */}
-      <div
+      <Box
         onKeyDown={onKeyDown}
-        style={{
-          position: 'fixed',
-          top: 'calc(50% - 50px)',
-          left: '50%',
-          width: '580px',
-          maxWidth: 'calc(100vw - 32px)',
-          maxHeight: '440px',
-          backgroundColor: t.bg,
-          borderRadius: '12px',
-          boxShadow: t.shadow,
-          zIndex: 100000,
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          animation: 'straplight-slide-in 0.2s ease-out 0.05s both',
-        }}
+        background="neutral0"
+        shadow="filterShadow"
+        borderRadius="12px"
+        maxHeight="440px"
+        maxWidth="calc(100vw - 32px)"
+        overflow="hidden"
+        position='fixed'
+        top='calc(50% - 50px)'
+        left='50%'
+        width='580px'
+        zIndex={100000}
+        animation='straplight-slide-in 0.2s ease-out 0.05s both'
       >
-        {/* Search input */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '14px 16px',
-            borderBottom: `1px solid ${t.border}`,
-            gap: '10px',
-          }}
+        <Box
+          paddingLeft={4}
+          paddingRight={4}
+          paddingTop={3}
+          paddingBottom={3}
         >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={t.textMuted}
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search content..."
-            style={{
-              flex: 1,
-              border: 'none',
-              outline: 'none',
-              fontSize: '16px',
-              fontFamily: 'inherit',
-              color: t.inputText,
-              backgroundColor: 'transparent',
-            }}
-          />
-          {loading && (
-            <div
-              style={{
-                width: '18px',
-                height: '18px',
-                border: `2px solid ${t.spinnerTrack}`,
-                borderTopColor: t.spinnerAccent,
-                borderRadius: '50%',
-                animation: 'straplight-spin 0.6s linear infinite',
-              }}
-            />
-          )}
-        </div>
 
+          {/* Search input */}
+          <Flex
+            items="center"
+            gap="10px"
+          >
+            <Box
+              display="contents"
+              color="neutral400"
+            >
+              <Search width={20} height={20}/>
+            </Box>
+            <Box
+              color="neutral700"
+              flex="1"
+            >
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+                placeholder="Search content..."
+                style={{
+                  border: 'none',
+                  outline: 'none',
+                  fontSize: '16px',
+                  fontFamily: 'inherit',
+                  color: "inherit",
+                  backgroundColor: 'transparent',
+                }}
+              />
+            </Box>
+            {loading && <Loader small />}
+          </Flex>
+        </Box>
+        <Divider />
         {/* Results */}
-        <div
+        <Box
+          flex="1"
+          overflow="auto"
           ref={listRef}
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: results.length > 0 ? '8px' : '0',
-          }}
+          padding={results.length > 0 ? 2 : 0}
         >
           {query.trim() && !loading && results.length === 0 && (
-            <div
-              style={{
-                padding: '32px 16px',
-                textAlign: 'center',
-                color: t.textMuted,
-                fontSize: '14px',
-              }}
+            <Box
+              color="neutral600"
+              paddingLeft={4}
+              paddingRight={4}
+              paddingTop={8}
+              paddingBottom={8}
+              textAlign="center"
             >
-              No results found
-            </div>
+              <Typography>
+                No results found
+              </Typography>
+            </Box>
           )}
           {results.map((result, index) => (
             <ResultItem
@@ -222,29 +158,29 @@ export function StraplightOverlay() {
               result={result}
               isSelected={index === selectedIndex}
               onClick={() => navigateToResult(result)}
-              t={t}
             />
           ))}
-        </div>
+        </Box>
 
         {/* Footer */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            padding: '10px 16px',
-            borderTop: `1px solid ${t.border}`,
-            fontSize: '12px',
-            color: t.textMuted,
-          }}
+        <Divider />
+        <Box
+          paddingLeft={4}
+          paddingRight={4}
+          paddingTop={3}
+          paddingBottom={3}
         >
-          <span><Kbd t={t}>{'\u2191\u2193'}</Kbd> navigate</span>
-          <span><Kbd t={t}>{'\u23CE'}</Kbd> open</span>
-          <span><Kbd t={t}>esc</Kbd> close</span>
-          <span style={{ marginLeft: 'auto' }}><Kbd t={t}>{modKey}+K</Kbd> toggle</span>
-        </div>
-      </div>
+          <Flex
+            color="neutral600"
+            gap="16px"
+          >
+            <Typography fontSize="12px"><Kbd>{'\u2191\u2193'}</Kbd> navigate</Typography>
+            <Typography fontSize="12px"><Kbd>{'\u23CE'}</Kbd> open</Typography>
+            <Typography fontSize="12px"><Kbd>esc</Kbd> close</Typography>
+            <Typography fontSize="12px" style={{ marginLeft: 'auto' }}><Kbd>{modKey}+K</Kbd> toggle</Typography>
+          </Flex>
+        </Box>
+      </Box>
     </>
   );
 }
@@ -253,108 +189,113 @@ function ResultItem({
   result,
   isSelected,
   onClick,
-  t,
 }: {
   result: SearchResult;
   isSelected: boolean;
   onClick: () => void;
-  t: Theme;
 }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
-    <div
+    <Box
+      paddingLeft={3}
+      paddingRight={3}
+      paddingTop={2}
+      paddingBottom={2}
+      borderRadius="8px"
+      transition="background-color 0.1s"
+      cursor="pointer"
+      background={(isSelected || hovered) ? 'neutral150' : 'transparent'}
       onClick={onClick}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '10px 12px',
-        borderRadius: '8px',
-        cursor: 'pointer',
-        backgroundColor: isSelected ? t.bgSelected : 'transparent',
-        transition: 'background-color 0.1s',
-      }}
-      onMouseEnter={(e) => {
-        if (!isSelected)
-          (e.currentTarget as HTMLElement).style.backgroundColor = t.bgHover;
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLElement).style.backgroundColor = isSelected
-          ? t.bgSelected
-          : 'transparent';
-      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <div
-        style={{
-          flex: 1,
-          overflow: 'hidden',
-          marginRight: '12px',
-          display: 'flex',
-          alignItems: 'baseline',
-          gap: '8px',
-        }}
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
       >
-        <span
-          style={{
-            fontSize: '14px',
-            color: t.text,
-            fontWeight: isSelected ? 600 : 400,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            flexShrink: 1,
-            minWidth: 0,
-          }}
+        <Box
+          flex="1"
+          overflow="hidden"
+          marginRight={3}
         >
-          {result.label}
-        </span>
-        {result.fields && result.fields.length > 0 && (
-          <span
-            style={{
-              fontSize: '12px',
-              color: t.textMuted,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              flexShrink: 2,
-              minWidth: 0,
-            }}
+          <Flex
+            alignItems="baseline"
+            gap="8px"
           >
-            {result.fields.map((f) => f.value).join(' · ')}
-          </span>
-        )}
-      </div>
-      <span
-        style={{
-          fontSize: '11px',
-          color: t.textMuted,
-          backgroundColor: t.badge,
-          padding: '2px 8px',
-          borderRadius: '4px',
-          whiteSpace: 'nowrap',
-          flexShrink: 0,
-        }}
-      >
-        {result.contentType}
-      </span>
-    </div>
+            <Box
+              shrink="0"
+              minWidth={0}
+            >
+              <Typography
+                fontWeight={isSelected ? 600 : 400}
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {result.label}
+              </Typography>
+            </Box>
+            {result.fields && result.fields.length > 0 && (
+              <Box
+                shrink="1"
+                minWidth={0}
+              >
+                <Typography
+                  fontSize="12px"
+                  textColor="neutral600"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {result.fields.map((f) => f.value).join(' · ')}
+                </Typography>
+              </Box>
+            )}
+          </Flex>
+        </Box>
+        <Box
+          color="neutral600"
+          background="neutral150"
+          paddingLeft={2}
+          paddingRight={2}
+          paddingTop={1}
+          paddingBottom={1}
+          borderRadius="4px"
+          shrink="0"
+        >
+          <Typography fontSize="11px">
+            {result.contentType}
+          </Typography>
+        </Box>
+      </Flex>
+    </Box>
   );
 }
 
-function Kbd({ children, t }: { children: React.ReactNode; t: Theme }) {
+function Kbd({ children }: { children: React.ReactNode }) {
   return (
-    <kbd
-      style={{
-        display: 'inline-block',
-        padding: '1px 5px',
-        fontSize: '11px',
-        fontFamily: 'inherit',
-        color: t.kbdText,
-        backgroundColor: t.kbd,
-        border: `1px solid ${t.kbdBorder}`,
-        borderRadius: '4px',
-      }}
+    <Box
+      display="inline-block"
+      borderColor="neutral200"
+      background="neutral150"
+      borderRadius="4px"
     >
-      {children}
-    </kbd>
+      <kbd
+        style={{
+          display: 'inline-block',
+          padding: '1px 5px',
+          fontSize: '11px',
+          fontFamily: 'inherit',
+          borderRadius: '4px',
+        }}
+      >
+        {children}
+      </kbd>
+    </Box>
   );
 }
