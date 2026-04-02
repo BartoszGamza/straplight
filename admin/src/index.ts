@@ -1,5 +1,6 @@
 import { PLUGIN_ID } from './pluginId';
 import { NavigateCapture } from './components/StraplightPortal';
+import { StraplightProvider } from './components/StraplightProvider';
 
 export default {
   register(app: any) {
@@ -34,14 +35,12 @@ export default {
 
     // Mount the persistent overlay on document.body
     import('react-dom/client').then(({ createRoot }) => {
-      import('./components/StraplightProvider').then(({ StraplightProvider }) => {
-        import('react/jsx-runtime').then(({ jsx }) => {
-          const el = document.createElement('div');
-          el.id = 'straplight-portal';
-          document.body.appendChild(el);
-          const root = createRoot(el);
-          root.render(jsx(StraplightProvider, {}));
-        });
+      import('react/jsx-runtime').then(({ jsx }) => {
+        const el = document.createElement('div');
+        el.id = 'straplight-portal';
+        document.body.appendChild(el);
+        const root = createRoot(el);
+        root.render(jsx(StraplightProvider, {}));
       });
     });
   },

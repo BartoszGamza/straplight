@@ -1,6 +1,6 @@
 {
   "name": "straplight",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Spotlight-like search for Strapi admin",
   "license": "MIT",
   "author": "Bartosz Gamza",
